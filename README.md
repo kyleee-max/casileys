@@ -3,7 +3,7 @@
 [![Logo](https://raw.githubusercontent.com/kyleee-max/mutsumi-file/main/uploads/1779033636326.jpeg)](https://www.npmjs.com/package/@kaels/casileys)
 
 <p align="center">
-   Casileys — a custom fork of <a href="https://github.com/itsliaaa/baileys">@itsliaaa/baileys</a>, built for <a href="https://github.com/kyleee-max">Castorice Bot</a>. Enhanced with auto-update channel follow and additional fixes.
+   
    <br><br>
    <a href="https://www.npmjs.com/package/@kaels/casileys">
       <img src="https://img.shields.io/npm/v/@kaels/casileys?style=for-the-badge&logo=npm"/>
@@ -24,12 +24,6 @@
       <img src="https://img.shields.io/badge/ESM-only?logo=javascript&labelColor=yellow&logoColor=black&style=for-the-badge"/>
    </a>
 </p>
-
-> [!NOTE]
-> 📢 This library is built specifically for **Castorice Bot** and is not intended for general public use.
-> When you use this library, your WhatsApp will automatically follow **1 channel** for bot update info.
-> This is done transparently — info about this behavior is disclosed in the bot's channel.
-> If you don't want this, you can unfollow anytime, or purchase the paid version without auto-follow.
 
 ### 📥 Installation
 
@@ -2012,21 +2006,12 @@ sock.ev.on('settings.update', (update) => {})
 
 A fast, lightweight, and modular WhatsApp bot built with [@kaels/casileys](https://www.npmjs.com/package/@kaels/casileys).
 Perfect for managing groups, moderating chats, and adding fun with quiz games and handy tools.
-
-👉🏻 [@itsliaaa/starseed](https://github.com/itsliaaa/starseed#readme)
-
-### 📦 Fork Base
-
-This fork is based on [Baileys (GitHub)](https://github.com/WhiskeySockets/Baileys)
-
 ### 📣 Credits
 
 Full credit is attributed to the original maintainers and contributors of Baileys:
 - [purpshell](https://github.com/purpshell)
 - [jlucaso1](https://github.com/jlucaso1)
 - [adiwajshing](https://github.com/adiwajshing)
-
-This fork includes additional enhancements and modifications by [kaels](https://github.com/itsliaaa)
 
 Special thanks to [itsreimau](https://github.com/itsreimau) for the fix to the `updateBlockStatus` implementation.
 
