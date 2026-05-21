@@ -11,8 +11,8 @@
    <a href="https://www.npmjs.com/package/@kaels/casileys">
       <img src="https://img.shields.io/npm/dm/@kaels/casileys?style=for-the-badge&logo=npm"/>
    </a>
-   <a href="https://github.com/kaels/casileys">
-      <img src="https://img.shields.io/github/stars/kaels/casileys?style=for-the-badge&logo=github"/>
+   <a href="https://github.com/kyleee-max/casileys">
+      <img src="https://img.shields.io/github/stars/kyleee-max/casileys?style=for-the-badge&logo=github"/>
    </a>
    <a href="LICENSE">
       <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge"/>
