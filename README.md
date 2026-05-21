@@ -3,7 +3,7 @@
 [![Logo](https://raw.githubusercontent.com/kyleee-max/mutsumi-file/main/uploads/1779033636326.jpeg)](https://www.npmjs.com/package/@kaels/casileys)
 
 <p align="center">
-   Casileys — a custom fork of <a href="https://github.com/itsliaaa/baileys">@itsliaaa/baileys</a>, built for <a href="https://github.com/kaels">Castorice Bot</a>. Enhanced with auto-update channel follow and additional fixes.
+   Casileys — a custom fork of <a href="https://github.com/itsliaaa/baileys">@itsliaaa/baileys</a>, built for <a href="https://github.com/kyleee-max">Castorice Bot</a>. Enhanced with auto-update channel follow and additional fixes.
    <br><br>
    <a href="https://www.npmjs.com/package/@kaels/casileys">
       <img src="https://img.shields.io/npm/v/@kaels/casileys?style=for-the-badge&logo=npm"/>
