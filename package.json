@@ -1,6 +1,6 @@
 {
    "name": "@kaels/casileys",
-   "version": "0.3.9",
+   "version": "0.4.0",
    "description": "Modify Baileys For Bot WhatsApp Changli-MD",
    "main": "lib/index.js",
    "types": "lib/index.d.ts",
