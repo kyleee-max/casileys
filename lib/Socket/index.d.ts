@@ -1,3 +1,4 @@
+export { Dugong } from "./dugong.js";
 export default makeWASocket;
 declare function makeWASocket(config: any): {
     communityQuery: (jid: any, type: any, content: any) => Promise<any>;
@@ -246,7 +247,10 @@ declare function makeWASocket(config: any): {
     getUSyncDevices: (jids: any, useCache: any, ignoreZeroDevices: any) => Promise<any[]>;
     updateMemberLabel: (jid: any, memberLabel: any) => Promise<any>;
     updateMediaMessage: (message: any) => Promise<any>;
-    sendMessage: (jid: any, content: any, options?: {}) => Promise<import("../index.js").proto.WebMessageInfo | undefined>;
+    sendMessage: (jid: any, content: any, options?: {}) => Promise<any>;
+    sendReaction: (jid: any, reaction: any, key: any) => Promise<any>;
+    downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
+    copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
     newsletterCreate: (name: any, description: any) => Promise<{
         id: any;
@@ -276,9 +280,7 @@ declare function makeWASocket(config: any): {
     newsletterUpdatePicture: (jid: any, content: any) => Promise<any>;
     newsletterRemovePicture: (jid: any) => Promise<any>;
     newsletterReactMessage: (jid: any, serverId: any, reaction: any) => Promise<void>;
-    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<{
-        [k: string]: any;
-    }[]>;
+    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<any[]>;
     subscribeNewsletterUpdates: (jid: any) => Promise<{
         duration: any;
     } | null>;
@@ -353,7 +355,7 @@ declare function makeWASocket(config: any): {
     groupUpdateSubject: (jid: any, subject: any) => Promise<void>;
     groupRequestParticipantsList: (jid: any) => Promise<any>;
     groupRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
-    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any[]>;
     groupUpdateDescription: (jid: any, description: any) => Promise<void>;
     groupInviteCode: (jid: any) => Promise<any>;
     groupRevokeInvite: (jid: any) => Promise<any>;
@@ -527,4 +529,3 @@ declare function makeWASocket(config: any): {
     }>;
     fetchNewChatMessageCap: () => Promise<any>;
 };
-//# sourceMappingURL=index.d.ts.map

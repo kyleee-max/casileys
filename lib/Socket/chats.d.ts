@@ -1,10 +1,3 @@
-export function buildProfilePictureQueryContent(type: any, tcTokenContent: any): {
-    tag: string;
-    attrs: {
-        type: any;
-        query: string;
-    };
-}[];
 export function makeChatsSocket(config: any): {
     findUserId: (pnLid: any) => Promise<{
         lid: undefined;
@@ -141,4 +134,3 @@ export function makeChatsSocket(config: any): {
     }>;
     fetchNewChatMessageCap: () => Promise<any>;
 };
-//# sourceMappingURL=chats.d.ts.map

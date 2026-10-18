@@ -22,4 +22,20 @@ export * from "./browser-utils.js";
 export * from "./companion-reg-client-utils.js";
 export * from "./identity-change-handler.js";
 export * from "./stanza-ack.js";
-//# sourceMappingURL=index.d.ts.map
+export * from "./anti-delete.js";
+export * from "./message-search.js";
+export * from "./chat-history-helpers.js";
+export * from "./scheduling.js";
+export * from "./auto-reply.js";
+export * from "./templates.js";
+export * from "./vcard.js";
+export * from "./media-messages.js";
+export * from "./stickerpack.js";
+export * from "./media-set.js";
+export * from "./status.js";
+export * from "./use-cache-manager-auth-state.js";
+export * from "./baileys-event-stream.js";
+export * from "./past-participants.js";
+export * from "./chat-control.js";
+
+export * from "./MessageBuilder.js";

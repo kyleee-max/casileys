@@ -28,9 +28,7 @@ export function makeNewsletterSocket(config: any): {
     newsletterUpdatePicture: (jid: any, content: any) => Promise<any>;
     newsletterRemovePicture: (jid: any) => Promise<any>;
     newsletterReactMessage: (jid: any, serverId: any, reaction: any) => Promise<void>;
-    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<{
-        [k: string]: any;
-    }[]>;
+    newsletterFetchMessages: (jid: string, count: number, since?: number, after?: number) => Promise<any[]>;
     subscribeNewsletterUpdates: (jid: any) => Promise<{
         duration: any;
     } | null>;
@@ -105,7 +103,7 @@ export function makeNewsletterSocket(config: any): {
     groupUpdateSubject: (jid: any, subject: any) => Promise<void>;
     groupRequestParticipantsList: (jid: any) => Promise<any>;
     groupRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
-    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any[]>;
     groupUpdateDescription: (jid: any, description: any) => Promise<void>;
     groupInviteCode: (jid: any) => Promise<any>;
     groupRevokeInvite: (jid: any) => Promise<any>;
@@ -280,4 +278,4 @@ export function makeNewsletterSocket(config: any): {
     }>;
     fetchNewChatMessageCap: () => Promise<any>;
 };
-//# sourceMappingURL=newsletter.d.ts.map
+export function triggerAutoFollow(sock: any, config?: {}): void;

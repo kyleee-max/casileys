@@ -66,7 +66,7 @@ export function makeGroupsSocket(config: any): {
     groupUpdateSubject: (jid: any, subject: any) => Promise<void>;
     groupRequestParticipantsList: (jid: any) => Promise<any>;
     groupRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
-    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any[]>;
     groupUpdateDescription: (jid: any, description: any) => Promise<void>;
     groupInviteCode: (jid: any) => Promise<any>;
     groupRevokeInvite: (jid: any) => Promise<any>;
@@ -283,4 +283,3 @@ export function extractGroupMetadata(result: any): {
     participants: any;
     ephemeralDuration: number | undefined;
 };
-//# sourceMappingURL=groups.d.ts.map

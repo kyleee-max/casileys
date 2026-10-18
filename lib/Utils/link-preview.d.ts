@@ -10,4 +10,3 @@ export function getUrlInfo(text: any, opts?: {
     description: any;
     originalThumbnailUrl: any;
 } | undefined>;
-//# sourceMappingURL=link-preview.d.ts.map

@@ -61,7 +61,7 @@ export function decodeSyncdPatch(msg: any, name: any, initialState: any, getAppS
 }>;
 export function extractSyncdPatches(result: any, options: any): Promise<{}>;
 export function downloadExternalBlob(blob: any, options: any): Promise<any>;
-export function downloadExternalPatch(blob: any, options: any): Promise<proto.SyncdMutations>;
+export function downloadExternalPatch(blob: any, options: any): Promise<any>;
 export function decodeSyncdSnapshot(name: any, snapshot: any, getAppStateSyncKey: any, minimumVersionNumber: any, validateMacs: boolean | undefined, logger: any): Promise<{
     state: {
         version: number;
@@ -97,7 +97,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         archiveChatAction: {
@@ -121,7 +121,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         markChatAsReadAction: {
@@ -145,7 +145,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         deleteMessageForMeAction: {
@@ -169,7 +169,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         clearChatAction: {
@@ -192,7 +192,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         pinAction: {
@@ -215,7 +215,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         contactAction: any;
@@ -236,7 +236,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         privacySettingDisableLinkPreviewsAction: any;
@@ -257,7 +257,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: string[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         starAction: {
@@ -280,7 +280,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         deleteChatAction: {
@@ -303,7 +303,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         pushNameSetting: {
@@ -326,7 +326,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: string[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         quickReplyAction: {
@@ -353,7 +353,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         labelEditAction: {
@@ -379,7 +379,7 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 } | {
     syncAction: {
         labelAssociationAction: {
@@ -402,8 +402,6 @@ export function chatModificationToAppPatch(mod: any, jid: any): {
     index: any[];
     type: string;
     apiVersion: number;
-    operation: proto.SyncdMutation.SyncdOperation;
+    operation: any;
 };
 export function processSyncAction(syncAction: any, ev: any, me: any, initialSyncOpts: any, logger: any): void;
-import { proto } from '../../WAProto/index.js';
-//# sourceMappingURL=chat-utils.d.ts.map

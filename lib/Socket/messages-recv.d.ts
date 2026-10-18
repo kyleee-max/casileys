@@ -4,7 +4,7 @@ export function makeMessagesRecvSocket(config: any): {
     rejectCall: (callId: any, callFrom: any) => Promise<void>;
     fetchMessageHistory: (count: any, oldestMsgKey: any, oldestMsgTimestamp: any) => Promise<any>;
     requestPlaceholderResend: (messageKey: any, msgData: any) => Promise<any>;
-    messageRetryManager: import("../Utils/message-retry-manager.js").MessageRetryManager | null;
+    messageRetryManager: import("../index.js").MessageRetryManager | null;
     userDevicesCache: any;
     devicesMutex: {
         mutex(code: any): any;
@@ -49,7 +49,10 @@ export function makeMessagesRecvSocket(config: any): {
     getUSyncDevices: (jids: any, useCache: any, ignoreZeroDevices: any) => Promise<any[]>;
     updateMemberLabel: (jid: any, memberLabel: any) => Promise<any>;
     updateMediaMessage: (message: any) => Promise<any>;
-    sendMessage: (jid: any, content: any, options?: {}) => Promise<proto.WebMessageInfo | undefined>;
+    sendMessage: (jid: any, content: any, options?: {}) => Promise<any>;
+    sendReaction: (jid: any, reaction: any, key: any) => Promise<any>;
+    downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
+    copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
     newsletterCreate: (name: any, description: any) => Promise<{
         id: any;
@@ -79,9 +82,7 @@ export function makeMessagesRecvSocket(config: any): {
     newsletterUpdatePicture: (jid: any, content: any) => Promise<any>;
     newsletterRemovePicture: (jid: any) => Promise<any>;
     newsletterReactMessage: (jid: any, serverId: any, reaction: any) => Promise<void>;
-    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<{
-        [k: string]: any;
-    }[]>;
+    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<any[]>;
     subscribeNewsletterUpdates: (jid: any) => Promise<{
         duration: any;
     } | null>;
@@ -156,7 +157,7 @@ export function makeMessagesRecvSocket(config: any): {
     groupUpdateSubject: (jid: any, subject: any) => Promise<void>;
     groupRequestParticipantsList: (jid: any) => Promise<any>;
     groupRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
-    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any[]>;
     groupUpdateDescription: (jid: any, description: any) => Promise<void>;
     groupInviteCode: (jid: any) => Promise<any>;
     groupRevokeInvite: (jid: any) => Promise<any>;
@@ -330,5 +331,3 @@ export function makeMessagesRecvSocket(config: any): {
     }>;
     fetchNewChatMessageCap: () => Promise<any>;
 };
-import { proto } from '../../WAProto/index.js';
-//# sourceMappingURL=messages-recv.d.ts.map
