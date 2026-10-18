@@ -1,6 +1,6 @@
 export function tokenizeCode(code: any, language?: string): {
     highlightType: any;
-    codeContent: string | undefined;
+    codeContent: string;
 }[];
 export function toUnified(submessages: any, uuid: any): {
     response_id: any;
@@ -46,4 +46,3 @@ export function wrapToBotForwardedMessage(richResponseMessage: any): {
         };
     };
 };
-//# sourceMappingURL=rich-message-utils.d.ts.map

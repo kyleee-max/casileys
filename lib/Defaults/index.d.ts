@@ -3,8 +3,13 @@ export const BIZ_BOT_SUPPORT_PAYLOAD: "{\"version\":1,\"is_ai_message\":true,\"s
 export const DEFAULT_ORIGIN: "https://web.whatsapp.com";
 export const CALL_VIDEO_PREFIX: "https://call.whatsapp.com/video/";
 export const CALL_AUDIO_PREFIX: "https://call.whatsapp.com/voice/";
-export const WA_AUTHOR_URL: "https://wa.me/628386859765";
-export const CASILEYS_NAME: "Casileys";
+export const DONATE_URL: "";
+export const LIBRARY_NAME: "vanzxy/baileys";
+export const COMPANION_DEVICE_VERSION: {
+    primary: number;
+    secondary: number;
+    tertiary: number;
+};
 export const DEF_CALLBACK_PREFIX: "CB:";
 export const DEF_TAG_PREFIX: "TAG:";
 export const PHONE_CONNECTION_CB: "CB:Pong";
@@ -29,7 +34,7 @@ export namespace WA_CERT_DETAILS {
     let ISSUER: string;
     let PUBLIC_KEY: any;
 }
-export const PROCESSABLE_HISTORY_TYPES: proto.HistorySync.HistorySyncType[];
+export const PROCESSABLE_HISTORY_TYPES: any[];
 export namespace DEFAULT_CACHE_TTLS {
     let SIGNAL_STORE: number;
     let MSG_RETRY: number;
@@ -62,6 +67,10 @@ export namespace DEFAULT_CONNECTION_CONFIG {
         let maxCommitRetries: number;
         let delayBetweenTriesMs: number;
     }
+    export let eventBufferTimeoutMs: number;
+    export let statusBroadcastDelayMs: number;
+    export let albumDelayMs: number;
+    export let phashRetryEnabled: boolean;
     export let generateHighQualityLinkPreview: boolean;
     export let enableAutoSessionRecreation: boolean;
     export let enableRecentMessageCache: boolean;
@@ -138,8 +147,6 @@ export namespace TimeMs {
     let Day: number;
     let Week: number;
 }
-import { proto } from '../../WAProto/index.js';
 declare const version: number[];
 import { makeLibSignalRepository } from '../Signal/libsignal.js';
 export {};
-//# sourceMappingURL=index.d.ts.map

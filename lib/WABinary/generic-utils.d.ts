@@ -11,9 +11,7 @@ export function assertNodeErrorFree(node: any): void;
 export function reduceBinaryNodeToDictionary(node: any, tag: any): any;
 export function getBinaryNodeMessages({ content }: {
     content: any;
-}): {
-    [k: string]: any;
-}[];
+}): any[];
 export function getBizBinaryNode(message: any): {
     tag: string;
     attrs: {
@@ -74,4 +72,3 @@ export function getBizBinaryNode(message: any): {
         };
     })[];
 };
-//# sourceMappingURL=generic-utils.d.ts.map

@@ -44,7 +44,10 @@ export function makeMessagesSocket(config: any): {
     messageRetryManager: MessageRetryManager | null;
     updateMemberLabel: (jid: any, memberLabel: any) => Promise<any>;
     updateMediaMessage: (message: any) => Promise<any>;
-    sendMessage: (jid: any, content: any, options?: {}) => Promise<proto.WebMessageInfo | undefined>;
+    sendMessage: (jid: any, content: any, options?: {}) => Promise<any>;
+    sendReaction: (jid: any, reaction: any, key: any) => Promise<any>;
+    downloadMedia: (message: any, type?: string, options?: {}) => Promise<any>;
+    copyNForward: (jid: any, message: any, forceForward?: boolean, options?: {}) => Promise<any>;
     executeWMexQuery: (variables: any, queryId: any, dataPath: any) => Promise<any>;
     newsletterCreate: (name: any, description: any) => Promise<{
         id: any;
@@ -74,9 +77,7 @@ export function makeMessagesSocket(config: any): {
     newsletterUpdatePicture: (jid: any, content: any) => Promise<any>;
     newsletterRemovePicture: (jid: any) => Promise<any>;
     newsletterReactMessage: (jid: any, serverId: any, reaction: any) => Promise<void>;
-    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<{
-        [k: string]: any;
-    }[]>;
+    newsletterFetchMessages: (type: any, key: any, count: any, after: any, before: any) => Promise<any[]>;
     subscribeNewsletterUpdates: (jid: any) => Promise<{
         duration: any;
     } | null>;
@@ -151,7 +152,7 @@ export function makeMessagesSocket(config: any): {
     groupUpdateSubject: (jid: any, subject: any) => Promise<void>;
     groupRequestParticipantsList: (jid: any) => Promise<any>;
     groupRequestParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
-    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any>;
+    groupParticipantsUpdate: (jid: any, participants: any, action: any) => Promise<any[]>;
     groupUpdateDescription: (jid: any, description: any) => Promise<void>;
     groupInviteCode: (jid: any) => Promise<any>;
     groupRevokeInvite: (jid: any) => Promise<any>;
@@ -326,5 +327,3 @@ export function makeMessagesSocket(config: any): {
     fetchNewChatMessageCap: () => Promise<any>;
 };
 import { MessageRetryManager } from '../Utils/index.js';
-import { proto } from '../../WAProto/index.js';
-//# sourceMappingURL=messages-send.d.ts.map

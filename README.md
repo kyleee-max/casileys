@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <b>v0.5.0</b> — Core synced with latest upstream base (WAProto refresh + 40+ stability fixes) while keeping every Casileys-unique feature intact.
+</p>
+
+<p align="center">
   <a href="https://npmjs.com/package/@kaels/casileys"><img src="https://img.shields.io/npm/v/@kaels/casileys?style=for-the-badge&logo=npm"/></a>
   <a href="https://npmjs.com/package/@kaels/casileys"><img src="https://img.shields.io/npm/dm/@kaels/casileys?style=for-the-badge&logo=npm"/></a>
   <a href="https://github.com/kyleee-max/casileys"><img src="https://img.shields.io/github/stars/kyleee-max/casileys?style=for-the-badge&logo=github"/></a>
@@ -30,10 +34,12 @@
 | Albums | ✅ |
 | Polls | ✅ |
 | Interactive Messages | ✅ |
+| Message Builders (Button V1/V2/V3, Carousel, NativeFlow, A2UI) | ✅ |
 | Rich Responses | ✅ |
 | Inline Entities | ✅ |
 | Tables | ✅ |
 | Group Status | ✅ |
+| Status Broadcast | ✅ |
 | Sticker Pack | ✅ |
 | Newsletter Messages | ✅ |
 | Group Management | ✅ |
@@ -42,8 +48,43 @@
 | Business Features | ✅ |
 | Privacy Management | ✅ |
 | Message Editing & Deletion | ✅ |
+| Anti-Delete Handler | ✅ |
+| Message Search | ✅ |
+| Templates & VCard | ✅ |
 
 Casileys is designed to remain readable and auditable while extending the functionality available from its upstream fork.
+
+---
+
+## 🆕 What's New in 0.5.0
+
+This release syncs the core with the latest upstream base while preserving every Casileys-unique feature.
+
+**Core sync**
+
+- WAProto updated to the 26-08 refresh (138 new protocol types, superset of the previous schema)
+- 40+ stability fixes merged from upstream (connection validation, decrypt handling, media upload, appPatch performance, phash retry, newsletter request shape, dll)
+- Socket chain now includes the `username` layer (`checkUsername` / `setUsername`)
+- New Utils modules: `status.js`, `anti-delete`, `message-search`, `templates`, `vcard`, `stickerpack`, `media-set`, `PersistentStore`, dll
+
+**New: Message Builders suite**
+
+- Full builder suite under `lib/Builders/`: `AIRich` v5, `Button` / `ButtonV2` / `ButtonV3`, `Carousel`, `NativeFlow`, `Poll`, `A2UI`, `Album`, `Contact`, `Location`, `LinkPreview`
+- `sock.createAIRich()` hook retained for backward compatibility — now backed by the refactored `AIRich` v5 (fixes early "Baca selengkapnya" bubble collapse via `originalRecipientMetadata`)
+
+**New: Status Broadcast helper**
+
+- `StatusHelper` + `createTextStatus` / `createImageStatus` / `createVideoStatus` / `createAudioStatus` for posting to `status@broadcast` with styled backgrounds, fonts, and mentions
+
+**Preserved Casileys features**
+
+- `resolveMentionedPn()` — LID → PN mapping into `contextInfo.mentionedPn`
+- `group-status.js` helper — `sendGroupStatusText` / `Image` / `Video` / `Audio` / `Sticker` + WebP conversion
+- `WA_AUTHOR_URL` + `CASILEYS_NAME` branding constants
+
+**Removed (out of scope)**
+
+- `Framework/`, `VoIP/`, `assets/wasm/` — not included in this release
 
 ---
 
@@ -63,6 +104,11 @@ Some of the included changes cover:
 - Direct `externalAdReply` access
 - Additional newsletter, group, community, profile, business, and privacy utilities
 - Casileys Group Status Helper
+- Casileys Status Broadcast helper (`StatusHelper`)
+- Casileys `resolveMentionedPn` (LID → PN mapping for mentioned users)
+- Message Builders suite (AIRich v5, Button V1/V2/V3, Carousel, NativeFlow, Poll, A2UI, Contact, Location, Album, LinkPreview)
+- Anti-delete handler, message search, templates, vcard, stickerpack utilities
+- Persistent Store (SQLite / MySQL / Postgres / Mongo / Redis adapters)
 
 ---
 
@@ -810,6 +856,133 @@ sock.sendMessage(jid, {
 
 ---
 
+## 🧱 Message Builders
+
+Casileys ships a full builder suite under `lib/Builders/` — chainable, typed classes for constructing modern WhatsApp interactive content without hand-rolling raw protocol nodes.
+
+| Builder | What it builds |
+|---|---|
+| `AIRich` | Rich AI-assistant-style response cards (headings, tables, code blocks, media cards, 40+ methods) |
+| `Button` / `ButtonV2` / `ButtonV3` | Interactive button messages (3 generations) |
+| `Carousel` | Swipeable card carousels (up to 10 cards) |
+| `NativeFlow` | WhatsApp native flow / CTA templates (catalog, order, payment, Flows, reminder, dll) |
+| `Poll` | Poll creation builder |
+| `A2UI` | A2UI widget messages |
+| `Album` | Multi-media album builder |
+| `Contact` | Contact card builder |
+| `Location` | Location share builder |
+
+All builders are exported from the package root:
+
+```js
+import { AIRich, Button, Carousel, NativeFlow, Poll } from '@kaels/casileys'
+```
+
+### Quick start — `sock.createAIRich()`
+
+Casileys keeps the convenience hook on the socket instance:
+
+```js
+const rich = sock.createAIRich()
+
+rich.addHtml(`
+  <h1>Hello from Casileys</h1>
+  <p>Rich HTML rendered inside WhatsApp.</p>
+`)
+
+await rich.send(jid)
+```
+
+You can also construct builders directly:
+
+```js
+import { AIRich } from '@kaels/casileys'
+
+const rich = new AIRich(sock)
+rich.addHeading('Title')
+rich.addParagraph('Body text')
+await rich.send(jid)
+```
+
+### Unified hub (optional)
+
+For convenience, a hub class wraps every builder behind short method names:
+
+```js
+import { CasileysBuilders } from '@kaels/casileys'
+
+const cb = new CasileysBuilders(sock)
+
+await cb.button()....build()   // Button builder
+await cb.carousel()...build()  // Carousel builder
+await cb.airich()...build()    // AIRich builder
+```
+
+Builder version is tracked independently:
+
+```js
+import { MESSAGE_BUILDER_VERSION } from '@kaels/casileys'
+console.log(MESSAGE_BUILDER_VERSION) // '5.0'
+```
+
+---
+
+## 📣 Status Broadcast
+
+Casileys includes a lightweight helper for posting **status@broadcast** (the status tab everyone sees) with proper background colors, fonts, and mentions.
+
+```js
+import { StatusHelper, createTextStatus, STATUS_FONTS, STATUS_BACKGROUNDS } from '@kaels/casileys'
+```
+
+### One-liner send
+
+```js
+// Broadcast to everyone
+await StatusHelper.send(sock, createTextStatus({ text: 'Hello world!' }))
+
+// Broadcast to specific contacts only
+await StatusHelper.send(sock, createTextStatus({ text: 'Hi!' }), [
+  '628xxxx@s.whatsapp.net',
+  '628yyyy@s.whatsapp.net'
+])
+```
+
+### Styled text status
+
+```js
+await StatusHelper.send(sock, createTextStatus({
+  text: 'Styled status!',
+  backgroundColor: STATUS_BACKGROUNDS.gradient.sunset,
+  font: STATUS_FONTS.DANCING,
+  textColor: '#FFFFFF',
+  mentions: ['628xxxx@s.whatsapp.net']
+}))
+```
+
+### Image / video / audio / gif
+
+```js
+await StatusHelper.send(sock, StatusHelper.image(fs.readFileSync('./photo.jpg'), 'Caption here'))
+await StatusHelper.send(sock, StatusHelper.videoUrl('https://example.com/video.mp4'))
+await StatusHelper.send(sock, StatusHelper.gif(fs.readFileSync('./anim.gif')))
+await StatusHelper.send(sock, StatusHelper.voiceNote(fs.readFileSync('./note.ogg')))
+```
+
+### Available fonts & backgrounds
+
+```js
+import { STATUS_FONTS, STATUS_BACKGROUNDS } from '@kaels/casileys'
+
+STATUS_FONTS        // SANS_SERIF, SERIF, NORICAN, BRYNDAN, BEBASNEUE, OSWALD, DAMION, DANCING, COMFORTAA, EXOTWO
+STATUS_BACKGROUNDS  // solid: { green, blue, purple, red, orange, yellow, pink, teal, gray, black, white }
+                    // gradient: { sunset, ocean, forest, purple, midnight, aurora }
+```
+
+> For **group status** (status inside a specific group), use the dedicated `sendGroupStatus*` helpers documented in the [Group Status](#-group-status) section instead.
+
+---
+
 ## 💳 Sending Payment Messages
 
 Payment-related structures are exposed through the corresponding message types.
@@ -1484,6 +1657,72 @@ console.log(imageLibrary)
 
 ---
 
+## 🧩 Additional Utilities
+
+Casileys bundles several optional utilities that go beyond the core socket API.
+
+### 🗑️ Anti-Delete
+
+Detect and handle deleted messages:
+
+```js
+import { createAntiDeleteHandler, isDeleteMessage, getDeletedMessageKey } from '@kaels/casileys'
+
+const handler = createAntiDeleteHandler(store, (deletedMsg) => {
+  console.log('Message deleted:', deletedMsg)
+})
+```
+
+### 🔍 Message Search
+
+Search message history via USync:
+
+```js
+import { searchMessages, createMessageSearch } from '@kaels/casileys'
+
+const results = await searchMessages(sock, 'query text')
+```
+
+### 📝 Templates
+
+Reusable message templates with variable interpolation:
+
+```js
+import { renderTemplate, PRESET_TEMPLATES, createTemplateManager } from '@kaels/casileys'
+
+const text = renderTemplate('Hello {name}, welcome to {group}!', {
+  name: 'Alice',
+  group: 'My Group'
+})
+```
+
+### 📇 VCard
+
+Generate and parse vCard payloads:
+
+```js
+import { generateVCard, parseVCard, generateVCards } from '@kaels/casileys'
+
+const vcard = generateVCard({ displayName: 'John', phone: '628xxxx' })
+```
+
+### 🗄️ Persistent Store
+
+Pluggable chat/message store backed by SQLite, MySQL, Postgres, MongoDB, or Redis:
+
+```js
+import { makePersistentStore } from '@kaels/casileys'
+
+const store = await makePersistentStore({
+  type: 'sqlite',
+  dbPath: './store.db'
+})
+```
+
+> Requires the corresponding optional peer dependency (`better-sqlite3`, `mysql2`, `pg`, `mongodb`, or `ioredis`) to be installed.
+
+---
+
 ## 📣 Newsletter Management
 
 Newsletter JIDs use:
@@ -1704,7 +1943,7 @@ It is not affiliated with WhatsApp or Meta Platforms, Inc.
 
 The project retains appropriate attribution to its upstream projects and contributors.
 
-Fork reference: `https://github.com/itsliaa/baileys`
+Fork reference: `https://github.com/itsliaaa/baileys`
 
 Please respect the licenses and attribution requirements of the upstream projects when using or redistributing Casileys.
 
@@ -1717,6 +1956,7 @@ Please respect the licenses and attribution requirements of the upstream project
 - WhiskeySockets / Baileys
 - Original Baileys maintainers and contributors
 - Contributors to the WhatsApp protocol ecosystem
+- Contributors to the broader Baileys fork ecosystem whose stability fixes and protocol updates are included in this release
 
 **Fork Base**
 

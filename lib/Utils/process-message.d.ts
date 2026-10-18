@@ -12,7 +12,7 @@ export function decryptPollVote({ encPayload, encIv }: {
     pollMsgId: any;
     pollEncKey: any;
     voterJid: any;
-}): proto.Message.PollVoteMessage;
+}): any;
 /**
  * Decrypt an event response
  * @param response encrypted event response
@@ -27,7 +27,7 @@ export function decryptEventResponse({ encPayload, encIv }: {
     eventMsgId: any;
     eventEncKey: any;
     responderJid: any;
-}): proto.Message.EventResponseMessage;
+}): any;
 /**
  * Decrypt a `secretEncryptedMessage` carrying a `MESSAGE_EDIT` payload.
  *
@@ -59,7 +59,7 @@ export function decryptMessageEdit({ encPayload, encIv }: {
     originalMsgId: any;
     editEncKey: any;
     editorJid: any;
-}): proto.Message;
+}): any;
 export function cleanMessage(message: any, meId: any, meLid: any): void;
 export function isRealMessage(message: any): boolean;
 export function shouldIncrementChatUnread(message: any): boolean;
@@ -69,7 +69,6 @@ export function getChatId({ remoteJid, participant, fromMe }: {
     fromMe: any;
 }): any;
 export default processMessage;
-import { proto } from '../../WAProto/index.js';
 declare function processMessage(message: any, { shouldProcessHistoryMsg, placeholderResendCache, ev, creds, signalRepository, keyStore, logger, options, getMessage }: {
     shouldProcessHistoryMsg: any;
     placeholderResendCache: any;
@@ -81,4 +80,3 @@ declare function processMessage(message: any, { shouldProcessHistoryMsg, placeho
     options: any;
     getMessage: any;
 }): Promise<void>;
-//# sourceMappingURL=process-message.d.ts.map

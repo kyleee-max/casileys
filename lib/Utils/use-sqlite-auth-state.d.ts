@@ -7,5 +7,5 @@ export function useSqliteAuthState(opts: any): Promise<{
         };
     };
     saveCreds: () => Promise<void>;
+    close: () => Promise<void>;
 }>;
-//# sourceMappingURL=use-sqlite-auth-state.d.ts.map

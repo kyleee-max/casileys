@@ -6,7 +6,7 @@ export * from "./Defaults/index.js";
 export * from "./WABinary/index.js";
 export * from "./WAM/index.js";
 export * from "./WAUSync/index.js";
+export { Dugong } from "./Socket/dugong.js";
 export { makeWASocket };
 export default makeWASocket;
 import makeWASocket from './Socket/index.js';
-//# sourceMappingURL=index.d.ts.map

@@ -37,4 +37,5 @@ export function signedKeyPair(identityKeyPair: any, keyId: any): {
     signature: any;
     keyId: any;
 };
-//# sourceMappingURL=crypto.d.ts.map
+export let md5: any;
+export let hkdf: any;

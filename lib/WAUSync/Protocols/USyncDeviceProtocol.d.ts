@@ -6,7 +6,14 @@ export class USyncDeviceProtocol {
             version: string;
         };
     };
-    getUserElement(): null;
+    getUserElement(user: any): {
+        tag: string;
+        attrs: {
+            phash: any;
+            ts: any;
+            expectedTs: any;
+        };
+    } | null;
     parser(node: any): {
         deviceList: {
             id: number;
@@ -20,4 +27,3 @@ export class USyncDeviceProtocol {
         } | undefined;
     };
 }
-//# sourceMappingURL=USyncDeviceProtocol.d.ts.map

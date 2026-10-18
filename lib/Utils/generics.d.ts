@@ -49,6 +49,12 @@ export function fetchLatestWaWebVersion(options?: {}): Promise<{
     isLatest: boolean;
     error: unknown;
 }>;
+export function fetchBestWaVersion(options?: {}): Promise<{
+    version: number[];
+    isLatest: boolean;
+    source: 'wa-web' | 'baileys-fork' | 'hardcoded-fallback';
+    error?: unknown;
+}>;
 export function generateMdTagPrefix(): string;
 export function getStatusFromReceiptType(type: any): any;
 export function getErrorCodeFromStreamError(node: any): {
@@ -61,4 +67,3 @@ export function getCallStatusFromNode({ tag, attrs }: {
 }): string;
 export function getCodeFromWSError(error: any): number;
 export function isWABusinessPlatform(platform: any): boolean;
-//# sourceMappingURL=generics.d.ts.map

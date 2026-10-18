@@ -58,4 +58,3 @@ export function makeSocket(config: any): {
 };
 import { WebSocketClient } from './Client/index.js';
 import { BinaryInfo } from '../WAM/BinaryInfo.js';
-//# sourceMappingURL=socket.d.ts.map

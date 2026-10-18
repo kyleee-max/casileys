@@ -60,4 +60,3 @@ export function makeInMemoryStore(config?: {}): {
     readFromFile: (path: any) => void;
 };
 import { ObjectRepository } from './object-repository.js';
-//# sourceMappingURL=make-in-memory-store.d.ts.map

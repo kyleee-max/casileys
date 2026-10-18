@@ -1,4 +1,4 @@
-export function makeEventBuffer(logger: any): {
+export function makeEventBuffer(logger: any, timeoutMs: any): {
     process(handler: any): () => void;
     emit(event: any, evData: any): any;
     isBuffering(): boolean;
@@ -10,4 +10,3 @@ export function makeEventBuffer(logger: any): {
     removeAllListeners: (...args: any[]) => any;
     destroy(): void;
 };
-//# sourceMappingURL=event-buffer.d.ts.map
