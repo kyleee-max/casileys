@@ -909,16 +909,14 @@ await rich.send(jid)
 For convenience, a hub class wraps every builder behind short method names:
 
 ```js
-import { VanzxyBaileys } from '@kaels/casileys'
+import { CasileysBuilders } from '@kaels/casileys'
 
-const vx = new VanzxyBaileys(sock)
+const cb = new CasileysBuilders(sock)
 
-await vx.button()....build()   // Button builder
-await vx.carousel()...build()  // Carousel builder
-await vx.airich()...build()    // AIRich builder
+await cb.button()....build()   // Button builder
+await cb.carousel()...build()  // Carousel builder
+await cb.airich()...build()    // AIRich builder
 ```
-
-> Note: the `VanzxyBaileys` hub class name is kept for compatibility with upstream builder aliases. It is purely a convenience wrapper — no Vanzxy branding is required to use it.
 
 Builder version is tracked independently:
 

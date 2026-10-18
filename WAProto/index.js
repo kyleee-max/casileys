@@ -3,7 +3,7 @@ import $protobuf from "protobufjs/minimal.js";
 
 const $Reader = $protobuf.Reader, $Writer = $protobuf.Writer, $util = $protobuf.util;
 
-const $root = $protobuf.roots["vanzxy_baileys_wa_proto"] || ($protobuf.roots["vanzxy_baileys_wa_proto"] = {});
+const $root = $protobuf.roots["casileys_wa_proto"] || ($protobuf.roots["casileys_wa_proto"] = {});
 
 function longToString(value, unsigned) {
 	if (typeof value === "string") {
