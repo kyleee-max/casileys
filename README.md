@@ -748,7 +748,14 @@ sock.sendMessage(jid, {
 
 ## 👉🏻 Interactive Messages
 
-### 🔘 Buttons
+Casileys supports interactive content in two ways:
+
+1. **Builders (recommended)** — chainable classes that validate input and auto-wire the correct wire format (media headers, `<biz>` nodes, per-button-type envelopes). Full docs: [Message Builders](#-message-builders).
+2. **Raw protocol objects** — pass WhatsApp's message shapes straight to `sock.sendMessage()` if you already have them.
+
+> ⚠️ The legacy `buttons:` field is capped at **3 quick-reply buttons** and does not render on every client. For URL/call/copy buttons, selection lists, or media headers, use the [`Button` builder](#-button--interactive-button-cards-recommended).
+
+### Raw: legacy buttons (max 3)
 
 ```js
 sock.sendMessage(jid, {
@@ -775,7 +782,7 @@ sock.sendMessage(jid, {
 })
 ```
 
-### 📋 List
+### Raw: list
 
 ```js
 sock.sendMessage(jid, {
@@ -805,7 +812,7 @@ sock.sendMessage(jid, {
 })
 ```
 
-### 🗄️ Interactive
+### Raw: native flow card
 
 ```js
 sock.sendMessage(jid, {
@@ -833,7 +840,7 @@ sock.sendMessage(jid, {
 })
 ```
 
-### 🫙 Hydrated Template
+### Raw: hydrated template
 
 ```js
 sock.sendMessage(jid, {
@@ -854,6 +861,40 @@ sock.sendMessage(jid, {
 })
 ```
 
+### Handling taps — `parseInteractiveReply()`
+
+Whatever the user taps (quick reply, list row, native-flow button) comes back as a normal incoming message. `parseInteractiveReply()` reads it into one consistent shape:
+
+```js
+import { parseInteractiveReply } from '@kaels/casileys'
+
+sock.ev.on('messages.upsert', ({ messages }) => {
+   for (const m of messages) {
+      if (!m.message) continue
+      const reply = parseInteractiveReply(m.message)
+      if (!reply.kind) continue
+
+      // reply.kind        — 'buttons_response' | 'list_response' | 'native_flow_response' | 'template_button_reply'
+      // reply.id          — the id you set when building (addReply id, rowId, ...)
+      // reply.displayText — the label/title the user saw and tapped
+      // reply.params      — parsed paramsJson for native-flow responses (null otherwise)
+      console.log(reply.kind, reply.id, reply.displayText)
+   }
+})
+```
+
+To send a reply *as* an interactive response (e.g. Flows data-exchange or simulating a tap):
+
+```js
+await sock.sendMessage(jid, {
+   flowReply: {
+      name: 'quick_reply',
+      text: 'Opened',
+      paramsJson: JSON.stringify({ id: 'open' })
+   }
+})
+```
+
 ---
 
 ## 🧱 Message Builders
@@ -862,25 +903,329 @@ Casileys ships a full builder suite under `lib/Builders/` — chainable, typed c
 
 | Builder | What it builds |
 |---|---|
-| `AIRich` | Rich AI-assistant-style response cards (headings, tables, code blocks, media cards, 40+ methods) |
-| `Button` / `ButtonV2` / `ButtonV3` | Interactive button messages (3 generations) |
+| `Button` / `ButtonV2` / `ButtonV3` | Interactive button messages (3 generations — see below) |
 | `Carousel` | Swipeable card carousels (up to 10 cards) |
-| `NativeFlow` | WhatsApp native flow / CTA templates (catalog, order, payment, Flows, reminder, dll) |
-| `Poll` | Poll creation builder |
-| `A2UI` | A2UI widget messages |
-| `Album` | Multi-media album builder |
-| `Contact` | Contact card builder |
-| `Location` | Location share builder |
+| `Poll` | Polls and quizzes |
+| `NativeFlow` | Simplified CTA cards (quick reply, URL, copy, call, select) |
+| `AIRich` | Rich AI-assistant-style response cards (headings, tables, code blocks, media, 40+ methods) |
+| `Album` | Multi-photo / multi-video albums |
+| `Contact` | Contact cards |
+| `Location` | Location shares |
+| `A2UI` | Bloks / A2UI widget messages (advanced — also reachable via `Button.setBloksWidget()`) |
 
-All builders are exported from the package root:
+All builders are exported from the package root and follow the same contract:
 
 ```js
-import { AIRich, Button, Carousel, NativeFlow, Poll } from '@kaels/casileys'
+import { Button, Carousel, Poll, NativeFlow, Album, Contact, Location, AIRich } from '@kaels/casileys'
 ```
 
-### Quick start — `sock.createAIRich()`
+- Chainable setters (`setBody()`, `addReply()`, …) all `return this`.
+- Shared header/text methods from `BaseBuilder`: `setTitle()`, `setSubtitle()`, `setBody()`, `setFooter()`, `setContextInfo()`.
+- `build(jid)` → returns the WAMessage object **without sending** (inspect it, relay it yourself, or compose it into another builder).
+- `send(jid, options?)` → builds **and** relays via `sock.relayMessage()`; returns the WAMessage.
 
-Casileys keeps the convenience hook on the socket instance:
+### 🔘 Button — interactive button cards (recommended)
+
+`Button` builds WhatsApp's modern **native-flow** interactive messages: a header (text or image/video/document), body, footer, and any mix of button types — quick replies, open-URL, tap-to-call, copy-to-clipboard, selection lists, WhatsApp Flows, even full Bloks/A2UI widgets. This is the format current WhatsApp clients natively render.
+
+> There are three generations — pick by compatibility need:
+>
+> | Builder | Wire format | Limits | Use when |
+> |---|---|---|---|
+> | `Button` | native-flow (`interactiveMessage`) | media headers, selection lists, Flows, Bloks | default choice |
+> | `ButtonV2` | legacy `buttonsMessage` | max 3 quick-reply buttons | old clients must render the legacy format |
+> | `ButtonV3` | hydrated template (`templateMessage`) | max 3 (reply / URL / call) | building on or editing an existing template message (`loadFrom()`) |
+
+#### Quick start — quick-reply buttons
+
+```js
+import { Button } from '@kaels/casileys'
+
+await new Button(sock)
+  .setBody('Pick a color:')
+  .setFooter('Casileys')
+  .addReply('Red', 'color_red')
+  .addReply('Blue', 'color_blue')
+  .send(jid)
+```
+
+The user's tap comes back as a normal message — read it with `parseInteractiveReply()` (see [Handling taps](#handling-taps--parseinteractivereply)):
+
+```js
+import { parseInteractiveReply } from '@kaels/casileys'
+
+const reply = parseInteractiveReply(m.message)
+if (reply.kind === 'native_flow_response') {
+  console.log(reply.id) // 'color_red' or 'color_blue'
+}
+```
+
+#### Button types
+
+| Method | What it does | Example |
+|---|---|---|
+| `addReply(label, id)` | Quick reply — sends `id` back on tap. `id` is required; WA silently drops replies without one. | `.addReply('Yes', 'yes')` |
+| `addUrl(label, url, webview?)` | Opens a URL (system browser, or in-app webview if `webview` is `true`). | `.addUrl('Docs', 'https://example.com')` |
+| `addCall(label, phone)` | Tap-to-dial. | `.addCall('Call us', '+15551234567')` |
+| `addCopy(label, text)` | Copies text to the user's clipboard. | `.addCopy('Copy code', 'INVITE123')` |
+| `addSelection(title)` → `makeSection()` → `makeRow()` | Picker list inside the card. See [Selection list](#selection-list-single_select). | see below |
+| `addOpenWebview(title, url)` | Titled in-app webview. | `.addOpenWebview('Shop', 'https://shop.example')` |
+| `addFlow(flow, label)` | WhatsApp Flows — requires a real registered Flow id. | `.addFlow({ id: 'FLOW_ID' }, 'Continue')` |
+| `addLocation()` | Requests the user's live location. | `.addLocation()` |
+| `addReminder(label, id)` / `addCancelReminder(label, id)` | Reminder chips. | — |
+| `addAddress(label, id)` | Prompts the user's saved-address picker. | — |
+| `addButton(name, params)` | Raw native-flow escape hatch (`params` = object or pre-stringified JSON). | — |
+
+Business / payment helpers — require a WhatsApp Business account with the feature enabled; may render inert on regular accounts:
+`addCatalog`, `addViewCatalog`, `addMultiProduct`, `addOrderDetails`, `addOrderStatus`, `addTrackOrder`, `addReorder`, `addCancelOrder`, `addPaymentInfo`, `addPaymentStatus`, `addPaymentMethod`, `addPaymentKeyInfo`, `addReviewAndPay`, `addTransactionDetails`, `addBookingConfirmation`, `addCardMessage`, `addCallPermission`, `addVoiceCall`, `addVideoCall`, `addClearChat`, `addNavigateToScreen`.
+
+#### Selection list (single_select)
+
+A picker list rendered inside the card. WhatsApp only renders `single_select` when it is mixed with other buttons — `Button` handles this automatically (a lone selection is transparently sent as a legacy list message instead).
+
+```js
+await new Button(sock)
+  .setBody('Choose a menu:')
+  .setFooter('Casileys')
+  .addReply('Cancel', 'menu_cancel') // one extra button makes WA render the picker
+  .addSelection('Menu')
+    .makeSection('Food')
+      .makeRow('', 'Fried rice', 'Classic', 'menu_rice')
+      .makeRow('', 'Noodles', 'Spicy', 'menu_noodle')
+    .makeSection('Drinks')
+      .makeRow('', 'Tea', 'Hot/Iced', 'menu_tea')
+  .send(jid)
+```
+
+`makeRow(header, title, description, id)` — `title` and `id` are required; the tapped row's `id` comes back as `reply.id`.
+
+#### Media header
+
+```js
+await new Button(sock)
+  .setImage('https://example.com/banner.jpg')
+  .setBody('Look at this deal!')
+  .setFooter('Casileys')
+  .addUrl('Buy now', 'https://shop.example/item/1')
+  .addReply('Maybe later', 'deal_later')
+  .send(jid)
+```
+
+Every media setter accepts a URL **or** a Buffer: `.setImage(pathOrBuffer, options?)`, `.setVideo(pathOrBuffer, options?)`, `.setDocument(pathOrBuffer, options?)`. For fully custom media objects, `.setMedia(obj)` bypasses the shorthands.
+
+#### Message-level extras
+
+```js
+await new Button(sock)
+  .setBody('Limited offer!')
+  .setLimitedTimeOffer({
+    text: 'Ends in 2h',
+    url: 'https://shop.example/sale',
+    copy_code: 'SALE50',
+    expiration_time: Math.floor(Date.now() / 1000) + 7200
+  })
+  .setBottomSheet({ in_thread_buttons_limit: 2, list_title: 'More options' }) // >2 buttons collapse into a bottom sheet
+  .addReply('Grab it', 'sale_buy')
+  .addReply('Details', 'sale_info')
+  .addUrl('Share', 'https://shop.example/sale')
+  .send(jid)
+```
+
+Also available: `.setTapTargetConfiguration({ title, description, canonical_url, domain, buttonIndex })` — a callout pointing at one specific button.
+
+#### Bloks / A2UI widget
+
+Real interactive UI screens (text fields, checkboxes, sliders, buttons that fire an `action`) via WhatsApp's Bloks engine. Pass a nested tree — ids are assigned automatically:
+
+```js
+await new Button(sock)
+  .setBloksWidget({
+    component: 'Column',
+    children: [
+      { component: 'Text', text: 'Feedback form' },
+      { component: 'TextField', label: 'Your message' },
+      {
+        component: 'Button',
+        variant: 'primary',
+        action: { call: 'submit_feedback' },
+        child: { component: 'Text', text: 'Send' }
+      }
+    ]
+  })
+  .send(jid)
+```
+
+Supported components: `Column`, `Row`, `Text`, `Icon`, `Divider`, `Image`, `Video`, `List`, `TextField`, `DateTimeInput`, `Slider`, `CheckBox`, `ChoicePicker`, `Button`, `Modal`, `Tabs`, `Card`, `AudioPlayer`. For sibling references (e.g. `Modal.trigger` pointing at an existing node), tag a node with `ref: 'name'` and point at it with `{ $ref: 'name' }`.
+
+#### `build()` vs `send()` vs `toCard()`
+
+```js
+const btn = new Button(sock).setBody('Hi').addReply('OK', 'ok')
+
+const card = await btn.toCard() // interactiveMessage content only — compose into Carousel
+const msg  = await btn.build(jid) // full WAMessage, NOT sent — relay it yourself if needed
+await btn.send(jid)               // build + sock.relayMessage() — what you usually want
+```
+
+#### Legacy quick card — `CardBuilder`
+
+A thin shorthand for simple quick-reply cards:
+
+```js
+import { CardBuilder } from '@kaels/casileys'
+
+await new CardBuilder(sock)
+  .title('Menu')
+  .text('Pick one')
+  .button('Option A', 'opt_a') // max 3 — wraps addReply()
+  .button('Option B', 'opt_b')
+  .send(jid)
+```
+
+#### ButtonV2 — legacy `buttonsMessage`
+
+Max 3 quick-reply buttons, widest support on old clients:
+
+```js
+import { ButtonV2 } from '@kaels/casileys'
+
+await new ButtonV2(sock)
+  .setBody('Legacy quick replies (max 3)')
+  .setFooter('Casileys')
+  .addButton('Yes', 'yes') // buttonId defaults to a random uuid
+  .addButton('No', 'no')
+  .send(jid)
+```
+
+Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)`, `.setThumbnail(path)`, `.row(row => row.button(...))`.
+
+#### ButtonV3 — hydrated template
+
+Reply / URL / call buttons in the hydrated-template format; can also load and extend an existing template message:
+
+```js
+import { ButtonV3 } from '@kaels/casileys'
+
+// Build fresh
+await new ButtonV3(sock)
+  .setTitle('Confirm')
+  .setBody('Proceed with payment?')
+  .setFooter('Casileys')
+  .addReply('Confirm', 'pay_yes')
+  .addUrl('Learn more', 'https://example.com/tos')
+  .send(jid)
+
+// Or load an existing templateMessage (e.g. one you quoted/fetched) and extend it
+const existing = /* a message object containing .templateMessage */
+await new ButtonV3(sock)
+  .loadFrom(existing)
+  .addReply('Extra option', 'extra')
+  .send(jid)
+```
+
+### 🎠 Carousel — swipeable cards (max 10)
+
+Cards are `Button` cards built with `toCard()`; each card **must** carry an image or video header:
+
+```js
+import { Button, Carousel } from '@kaels/casileys'
+
+const card = (img, title, price, id) =>
+  new Button(sock)
+    .setImage(img)
+    .setTitle(title)
+    .setSubtitle(price)
+    .setBody('Tap to view')
+    .addUrl('View', `https://shop.example/item/${id}`)
+    .toCard()
+
+await new Carousel(sock)
+  .setBody("Today's picks")
+  .setFooter('Casileys')
+  .addCard([
+    await card('https://example.com/1.jpg', 'Item A', '$10', 'a'),
+    await card('https://example.com/2.jpg', 'Item B', '$20', 'b')
+  ])
+  .send(jid)
+```
+
+### 📊 Poll
+
+```js
+import { Poll } from '@kaels/casileys'
+
+await new Poll(sock)
+  .setName('Lunch today?')
+  .addOptions(['Pizza', 'Sushi', 'Burger']) // or chain .addOption('Pizza') one at a time
+  .setMultiSelect()                        // allow multiple votes
+  .setSelectable(2)                        // max choices per voter
+  .setHideVoter()                          // hide who voted
+  .send(jid)
+```
+
+Quiz mode: `.setQuiz('Pizza')` marks one option as correct. Also: `.setEndDate(date)`, `.setCanAddOption()`, `.setAnnouncementGroup()`.
+
+### 🧩 NativeFlow — simplified CTA builder
+
+A lighter alternative to `Button` with the common quick-reply / URL / copy / call / select set plus offer and surface helpers:
+
+```js
+import { NativeFlow } from '@kaels/casileys'
+
+await new NativeFlow(sock)
+  .setHeader('Flash sale', 'Up to 70% off')
+  .setText('Hurry, stock is running out!')
+  .setFooter('Casileys')
+  .addQuickReply('Interested', 'sale_yes')
+  .addUrl('Shop now', 'https://shop.example/sale')
+  .addCopy('Copy voucher', 'SALE70')
+  .send(jid)
+```
+
+Also: `.addCall(label, phone)`, `.addSingleSelect(title, sections)`, `.addRawButton(obj)`, `.setOffer({ text, url, code, expiration })`, `.setImage()` / `.setVideo()` / `.setDocument()` / `.setAudioFooter()`.
+
+### 🖼️ Album — multi-photo / multi-video album
+
+```js
+import { Album } from '@kaels/casileys'
+
+await new Album(sock)
+  .addImage('./photo1.jpg', { caption: 'Day 1' })
+  .addImage('./photo2.jpg')
+  .addVideo('./clip.mp4')
+  .send(jid)
+```
+
+Also: `.addItems(items)`, `.setDelay(ms)` (gap between messages), `.clearItems()`.
+
+### 👤 Contact card
+
+```js
+import { Contact } from '@kaels/casileys'
+
+await new Contact(sock)
+  .setDisplayName('Support Team')
+  .addContact({ name: 'Alice', phone: '+15551234567', org: 'Acme', email: 'alice@acme.com' })
+  .send(jid)
+```
+
+Also: `.addRawVcard(displayName, vcard)`, `.clearContacts()`.
+
+### 📍 Location
+
+```js
+import { Location } from '@kaels/casileys'
+
+await new Location(sock)
+  .setCoordinates(-6.2, 106.8)
+  .setName('HQ')
+  .setAddress('Jakarta, Indonesia')
+  .send(jid)
+```
+
+### Quick start — `sock.createAIRich()` (rich AI cards)
+
+Casileys keeps a convenience hook for the `AIRich` builder on the socket instance:
 
 ```js
 const rich = sock.createAIRich()
@@ -893,7 +1238,7 @@ rich.addHtml(`
 await rich.send(jid)
 ```
 
-You can also construct builders directly:
+Or construct it directly:
 
 ```js
 import { AIRich } from '@kaels/casileys'
@@ -904,18 +1249,21 @@ rich.addParagraph('Body text')
 await rich.send(jid)
 ```
 
+Full AIRich docs (headings, tables, code blocks, media cards, 40+ methods): see [AIRich](#-airich--rich-html--rich-response-messages).
+
 ### Unified hub (optional)
 
-For convenience, a hub class wraps every builder behind short method names:
+A hub class wraps every builder behind short factory methods:
 
 ```js
 import { CasileysBuilders } from '@kaels/casileys'
 
 const cb = new CasileysBuilders(sock)
 
-await cb.button()....build()   // Button builder
-await cb.carousel()...build()  // Carousel builder
-await cb.airich()...build()    // AIRich builder
+await cb.button().setBody('Hi').addReply('OK', 'ok').send(jid)  // Button
+await cb.carousel().addCard(card).send(jid)                     // Carousel
+await cb.poll().setName('Vote?').addOptions(['A', 'B']).send(jid) // Poll
+await cb.airich().addHeading('Title').send(jid)                 // AIRich
 ```
 
 Builder version is tracked independently:
