@@ -5,7 +5,9 @@ export class SenderKeyRecord {
     senderKeyStates: SenderKeyState[];
     isEmpty(): boolean;
     getSenderKeyState(keyId: any): SenderKeyState | undefined;
+    hasLocalState(): boolean;
     addSenderKeyState(id: any, iteration: any, chainKey: any, signatureKey: any): void;
+    addLocalSenderKeyState(id: any, iteration: any, chainKey: any, keyPair: any): void;
     setSenderKeyState(id: any, iteration: any, chainKey: any, keyPair: any): void;
     serialize(): any[];
 }
