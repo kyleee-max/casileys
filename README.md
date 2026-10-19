@@ -1099,7 +1099,19 @@ await new ButtonV2(sock)
 
 Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)` (pre-built header object), `.setThumbnail(path)` (thumbnail for the fallback header), `.row(row => row.button(...))`.
 
-By default a text-only ButtonV2 uses the classic location-style header (`headerType: 6` at 0,0 — the legacy pattern that keeps buttons rendering side-by-side). Want a real image header instead? Opt in with `setImage()`:
+By default a text-only ButtonV2 uses the classic location-style header (`headerType: 6` at 0,0 — the legacy pattern that keeps buttons rendering side-by-side). The header can carry a regular image via `setThumbnail()` — any JPG/PNG/WebP, as a URL or Buffer, resized to 300×300 automatically (requires `sharp`):
+
+```js
+await new ButtonV2(sock)
+  .setTitle('Deal of the day')
+  .setSubtitle('Up to 70% off')
+  .setThumbnail('./banner.jpg') // or an image URL / Buffer
+  .setBody('Tap Yes to claim')
+  .addButton('Claim', 'claim_yes')
+  .send(jid)
+```
+
+Want the image as a real uploaded image header instead of the location-style header? Opt in with `setImage()`:
 
 ```js
 await new ButtonV2(sock)
