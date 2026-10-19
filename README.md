@@ -1097,18 +1097,18 @@ await new ButtonV2(sock)
   .send(jid)
 ```
 
-Optional image header — uploaded and rendered as a real image header:
+Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)` (pre-built header object), `.setThumbnail(path)` (thumbnail for the fallback header), `.row(row => row.button(...))`.
+
+By default a text-only ButtonV2 uses the classic location-style header (`headerType: 6` at 0,0 — the legacy pattern that keeps buttons rendering side-by-side). Want a real image header instead? Opt in with `setImage()`:
 
 ```js
 await new ButtonV2(sock)
   .setTitle('Deal of the day')
-  .setImage('https://example.com/banner.jpg') // URL or Buffer
+  .setImage('https://example.com/banner.jpg') // URL or Buffer — uploaded as a real image header
   .setBody('Tap Yes to claim')
   .addButton('Claim', 'claim_yes')
   .send(jid)
 ```
-
-Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)` (pre-built header object), `.setThumbnail(path)` (alias of `setImage()`), `.row(row => row.button(...))`.
 
 #### ButtonV3 — hydrated template
 
