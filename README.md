@@ -1097,7 +1097,18 @@ await new ButtonV2(sock)
   .send(jid)
 ```
 
-Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)`, `.setThumbnail(path)`, `.row(row => row.button(...))`.
+Optional image header — uploaded and rendered as a real image header:
+
+```js
+await new ButtonV2(sock)
+  .setTitle('Deal of the day')
+  .setImage('https://example.com/banner.jpg') // URL or Buffer
+  .setBody('Tap Yes to claim')
+  .addButton('Claim', 'claim_yes')
+  .send(jid)
+```
+
+Replies arrive as `buttons_response` (readable via `parseInteractiveReply()`). Also: `.addRawButton(obj)`, `.setMedia(obj)` (pre-built header object), `.setThumbnail(path)` (alias of `setImage()`), `.row(row => row.button(...))`.
 
 #### ButtonV3 — hydrated template
 
